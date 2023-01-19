@@ -1,0 +1,41 @@
+
+#include "gpio.h"
+
+static void gpioPortClkEn(PORT_TypeDef *port);
+
+void gpioPortClkEn(PORT_TypeDef *port)
+{
+	switch((uint32_t)port)
+	{
+		case (uint32_t)MDR_PORTA:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTA;
+		break;
+		case (uint32_t)MDR_PORTB:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTB;
+		break;
+		case (uint32_t)MDR_PORTC:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTC;
+		break;
+		case (uint32_t)MDR_PORTD:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTD;
+		break;
+		case (uint32_t)MDR_PORTE:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTE;
+		break;
+		case (uint32_t)MDR_PORTF:
+				MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTF;
+		break;
+	}
+}
+
+void gpioPinInit(PORT_TypeDef *port, uint8_t pin, uint8_t func)
+{
+	gpioPortClkEn(port);
+	port->OE |= 1 << pin;
+	port->FUNC |= func << (pin*2);
+	port->ANALOG |= 1 << pin;
+	port->PULL = 0;
+	port->PD = 0;
+	port->PWR |= 3 << (pin*2);
+	port->GFEN = 0;
+}
